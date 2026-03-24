@@ -1,0 +1,12 @@
+{
+  "id": "STS2RunsMod",
+  "pck_name": "STS2RunsMod",
+  "name": "STS2 Runs Uploader",
+  "author": "roberto",
+  "description": "Automatically uploads completed runs to sts2runs dashboard",
+  "version": "0.1.0",
+  "has_pck": false,
+  "has_dll": true,
+  "affects_gameplay": false,
+  "dependencies": []
+}
