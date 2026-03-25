@@ -43,7 +43,7 @@ namespace STS2RunsMod
                 // Manual postfix on RunManager.OnEnded(bool win)
                 var target = AccessTools.Method(typeof(RunManager), "OnEnded");
                 var postfix = typeof(RunCompletePatch).GetMethod(nameof(RunCompletePatch.OnRunEnded), BindingFlags.Public | BindingFlags.Static);
-                _harmony.Patch(target, postfix: new HarmonyMethod(postfix));
+                _harmony.Patch(target!, postfix: new HarmonyMethod(postfix!));
 
                 if (Config.Enabled)
                 {

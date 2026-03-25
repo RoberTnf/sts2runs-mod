@@ -3,22 +3,23 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
-    <STS2GameDir Condition="'$(STS2GameDir)' == ''">$(HOME)/.local/share/Steam/steamapps/common/Slay the Spire 2/data_sts2_linuxbsd_x86_64</STS2GameDir>
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="sts2">
-      <HintPath>$(STS2GameDir)/sts2.dll</HintPath>
+    <Compile Remove="stubs/**/*.cs" />
+
+    <ProjectReference Include="stubs/sts2/sts2.csproj">
       <Private>false</Private>
-    </Reference>
-    <Reference Include="0Harmony">
-      <HintPath>$(STS2GameDir)/0Harmony.dll</HintPath>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="stubs/0Harmony/0Harmony.csproj">
       <Private>false</Private>
-    </Reference>
-    <Reference Include="Steamworks.NET">
-      <HintPath>$(STS2GameDir)/Steamworks.NET.dll</HintPath>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="stubs/Steamworks.NET/Steamworks.NET.csproj">
       <Private>false</Private>
-    </Reference>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+    </ProjectReference>
   </ItemGroup>
 
 </Project>
