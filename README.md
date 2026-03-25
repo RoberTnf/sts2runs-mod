@@ -21,6 +21,13 @@ Upload behavior:
 - GitHub release tag: `v<version>` (created automatically if missing)
 - `task upload-release` uploads `dist/STS2RunsMod-v<version>.zip`
 
+## CI release automation
+
+When `mod_manifest.json` is pushed to `main`/`master`, GitHub Actions checks whether the `version` field changed compared to the previous commit.
+
+- If the version did not change, the workflow exits successfully without publishing.
+- If the version changed, it runs `task build-release` in `nix develop`, then creates or updates release `v<version>` and uploads `dist/STS2RunsMod-v<version>.zip`.
+
 Prerequisite for upload:
 
 ```bash

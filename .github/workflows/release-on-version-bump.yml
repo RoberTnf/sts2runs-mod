@@ -1,0 +1,76 @@
+name: Release On Version Bump
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - mod_manifest.json
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@v16
+
+      - name: Detect version change
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          CURRENT_VERSION="$(python3 -c 'import json; print(json.load(open("mod_manifest.json", encoding="utf-8"))["version"])')"
+          BEFORE_SHA="${{ github.event.before }}"
+          PREVIOUS_MANIFEST=""
+
+          if [ "$BEFORE_SHA" != "0000000000000000000000000000000000000000" ] && git cat-file -e "$BEFORE_SHA^{commit}" 2>/dev/null; then
+            PREVIOUS_MANIFEST="$(git show "$BEFORE_SHA:mod_manifest.json" 2>/dev/null || true)"
+          else
+            PREVIOUS_MANIFEST="$(git show "HEAD^:mod_manifest.json" 2>/dev/null || true)"
+          fi
+
+          PREVIOUS_VERSION=""
+          if [ -n "$PREVIOUS_MANIFEST" ]; then
+            PREVIOUS_VERSION="$(python3 -c 'import json,sys; print(json.loads(sys.stdin.read()).get("version", ""))' <<< "$PREVIOUS_MANIFEST")"
+          fi
+
+          if [ "$CURRENT_VERSION" = "$PREVIOUS_VERSION" ]; then
+            echo "version_changed=false" >> "$GITHUB_OUTPUT"
+            echo "No version change detected ($CURRENT_VERSION)."
+          else
+            echo "version_changed=true" >> "$GITHUB_OUTPUT"
+            echo "version=$CURRENT_VERSION" >> "$GITHUB_OUTPUT"
+            echo "Detected version change: '${PREVIOUS_VERSION:-<none>}' -> '$CURRENT_VERSION'."
+          fi
+
+      - name: Build release package
+        if: steps.version.outputs.version_changed == 'true'
+        run: nix develop --command task build-release
+
+      - name: Publish GitHub release
+        if: steps.version.outputs.version_changed == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          nix develop --command bash -lc '
+            set -euo pipefail
+            TAG="v${VERSION}"
+            ZIP_PATH="dist/STS2RunsMod-v${VERSION}.zip"
+
+            if gh release view "$TAG" >/dev/null 2>&1; then
+              gh release upload "$TAG" "$ZIP_PATH" --clobber
+            else
+              gh release create "$TAG" "$ZIP_PATH" --title "$TAG" --notes "Release $TAG"
+            fi
+          '
