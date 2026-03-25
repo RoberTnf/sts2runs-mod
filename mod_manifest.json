@@ -3,7 +3,7 @@
   "pck_name": "STS2RunsMod",
   "name": "STS2 Runs Uploader",
   "author": "roberto",
-  "description": "Automatically uploads completed runs to sts2runs dashboard",
+  "description": "Automatically uploads completed runs to sts2runs dashboard. Install/update: https://github.com/RoberTnf/sts2runs-mod/releases",
   "version": "0.1.0",
   "has_pck": false,
   "has_dll": true,

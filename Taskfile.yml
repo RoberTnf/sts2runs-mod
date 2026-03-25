@@ -1,0 +1,57 @@
+version: '3'
+
+tasks:
+  build-release:
+    desc: Build the mod and create a shareable release zip in dist/
+    cmds:
+      - nix develop --command dotnet build -c Release
+      - |
+        VERSION="$(python3 -c 'import json; print(json.load(open("mod_manifest.json", encoding="utf-8"))["version"])')"
+        RELEASE_DIR="dist/STS2RunsMod"
+        ZIP_PATH="dist/STS2RunsMod-v${VERSION}.zip"
+
+        rm -rf "$RELEASE_DIR"
+        mkdir -p "$RELEASE_DIR"
+
+        cp mod_manifest.json "$RELEASE_DIR/"
+        cp installation_instructions.txt "$RELEASE_DIR/"
+        cp .godot/mono/temp/bin/Release/STS2RunsMod.dll "$RELEASE_DIR/"
+
+        rm -f "$ZIP_PATH"
+        (
+          cd dist
+          zip -r "STS2RunsMod-v${VERSION}.zip" STS2RunsMod
+        )
+
+        printf "Created %s\n" "$ZIP_PATH"
+
+  upload-release:
+    desc: Upload the built release zip to GitHub Releases
+    cmds:
+      - |
+        VERSION="$(python3 -c 'import json; print(json.load(open("mod_manifest.json", encoding="utf-8"))["version"])')"
+        TAG="v${VERSION}"
+        ZIP_PATH="dist/STS2RunsMod-v${VERSION}.zip"
+
+        if [ ! -f "$ZIP_PATH" ]; then
+          printf "Missing %s. Run 'task build-release' first.\n" "$ZIP_PATH" >&2
+          exit 1
+        fi
+
+        if ! command -v gh >/dev/null 2>&1; then
+          printf "GitHub CLI (gh) is required to upload releases.\n" >&2
+          exit 1
+        fi
+
+        if ! gh auth status >/dev/null 2>&1; then
+          printf "GitHub CLI is not authenticated. Run 'gh auth login' first.\n" >&2
+          exit 1
+        fi
+
+        if gh release view "$TAG" >/dev/null 2>&1; then
+          gh release upload "$TAG" "$ZIP_PATH" --clobber
+        else
+          gh release create "$TAG" "$ZIP_PATH" --title "$TAG" --notes "Release $TAG"
+        fi
+
+        printf "Uploaded %s to release %s\n" "$ZIP_PATH" "$TAG"

@@ -4,17 +4,55 @@ Lightweight Slay the Spire 2 mod that exports completed runs and uploads them to
 
 ## Quickstart
 
-Build:
+Build and publish in two steps:
 
 ```bash
-dotnet build -c Release
+task build-release
+task upload-release
 ```
 
-Install (Linux default path):
+Output:
+
+- `dist/STS2RunsMod-v<version>.zip`
+- Zip contents: `STS2RunsMod/mod_manifest.json`, `STS2RunsMod/STS2RunsMod.dll`, and `STS2RunsMod/installation_instructions.txt`
+
+Upload behavior:
+
+- GitHub release tag: `v<version>` (created automatically if missing)
+- `task upload-release` uploads `dist/STS2RunsMod-v<version>.zip`
+
+Prerequisite for upload:
+
+```bash
+gh auth login
+```
+
+For a local Linux install shortcut (build + copy into your default Steam path):
 
 ```bash
 ./install.sh
 ```
+
+If you are coming from My Runs, install or update from the [GitHub releases page](https://github.com/RoberTnf/sts2runs-mod/releases).
+
+## Install
+
+1. Build the release zip with `task build-release`.
+2. Extract it so you have a folder named `STS2RunsMod`.
+3. Copy that folder to `<Slay the Spire 2 install dir>/mods/`.
+
+Resulting path should be:
+
+- `<Slay the Spire 2 install dir>/mods/STS2RunsMod/mod_manifest.json`
+- `<Slay the Spire 2 install dir>/mods/STS2RunsMod/STS2RunsMod.dll`
+
+Common Steam install locations:
+
+- Linux: `~/.local/share/Steam/steamapps/common/Slay the Spire 2`
+- macOS: `~/Library/Application Support/Steam/steamapps/common/Slay the Spire 2`
+- Windows: `C:\Program Files (x86)\Steam\steamapps\common\Slay the Spire 2`
+
+If your library is on another drive, open Steam -> Slay the Spire 2 -> Properties -> Installed Files -> Browse to get the exact install directory.
 
 The mod writes `config.cfg` next to the installed DLL on first run.
 

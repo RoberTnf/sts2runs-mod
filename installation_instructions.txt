@@ -1,0 +1,21 @@
+STS2 Runs Uploader - Installation Instructions
+
+1) Extract the release zip.
+2) Copy the STS2RunsMod folder into your Slay the Spire 2 mods folder.
+
+Expected files after install:
+- <Slay the Spire 2 install dir>/mods/STS2RunsMod/mod_manifest.json
+- <Slay the Spire 2 install dir>/mods/STS2RunsMod/STS2RunsMod.dll
+- <Slay the Spire 2 install dir>/mods/STS2RunsMod/installation_instructions.txt
+
+Common Steam install locations:
+- Linux: ~/.local/share/Steam/steamapps/common/Slay the Spire 2
+- macOS: ~/Library/Application Support/Steam/steamapps/common/Slay the Spire 2
+- Windows: C:\Program Files (x86)\Steam\steamapps\common\Slay the Spire 2
+
+If Steam is installed in a different library:
+Steam -> Slay the Spire 2 -> Properties -> Installed Files -> Browse
+
+Notes:
+- The mod creates config.cfg next to the DLL on first run.
+- If you update, overwrite files in STS2RunsMod.
