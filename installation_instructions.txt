@@ -6,7 +6,7 @@ STS2 Runs Uploader - Installation Instructions
 Expected files after install:
 - <Slay the Spire 2 install dir>/mods/STS2RunsMod/mod_manifest.json
 - <Slay the Spire 2 install dir>/mods/STS2RunsMod/STS2RunsMod.dll
-- <Slay the Spire 2 install dir>/mods/STS2RunsMod/installation_instructions.txt
+- <Slay the Spire 2 install dir>/mods/STS2RunsMod/installation_instructions.txt (not needed)
 
 Common Steam install locations:
 - Linux: ~/.local/share/Steam/steamapps/common/Slay the Spire 2
