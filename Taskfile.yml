@@ -1,6 +1,51 @@
 version: '3'
 
 tasks:
+  bump:major:
+    desc: Bump the major version (X.0.0)
+    cmds:
+      - |
+        python3 -c '
+        import json, pathlib
+        p = pathlib.Path("mod_manifest.json")
+        d = json.loads(p.read_text())
+        parts = list(map(int, d["version"].split(".")))
+        d["version"] = f"{parts[0]+1}.0.0"
+        p.write_text(json.dumps(d, indent=2) + "\n")
+        v = d["version"]
+        print(f"Bumped to {v}")
+        '
+
+  bump:minor:
+    desc: Bump the minor version (0.X.0)
+    cmds:
+      - |
+        python3 -c '
+        import json, pathlib
+        p = pathlib.Path("mod_manifest.json")
+        d = json.loads(p.read_text())
+        parts = list(map(int, d["version"].split(".")))
+        d["version"] = f"{parts[0]}.{parts[1]+1}.0"
+        p.write_text(json.dumps(d, indent=2) + "\n")
+        v = d["version"]
+        print(f"Bumped to {v}")
+        '
+
+  bump:patch:
+    desc: Bump the patch version (0.0.X)
+    cmds:
+      - |
+        python3 -c '
+        import json, pathlib
+        p = pathlib.Path("mod_manifest.json")
+        d = json.loads(p.read_text())
+        parts = list(map(int, d["version"].split(".")))
+        d["version"] = f"{parts[0]}.{parts[1]}.{parts[2]+1}"
+        p.write_text(json.dumps(d, indent=2) + "\n")
+        v = d["version"]
+        print(f"Bumped to {v}")
+        '
+
   build-release:
     desc: Build the mod and create a shareable release zip in dist/
     cmds:
@@ -25,33 +70,3 @@ tasks:
 
         printf "Created %s\n" "$ZIP_PATH"
 
-  upload-release:
-    desc: Upload the built release zip to GitHub Releases
-    cmds:
-      - |
-        VERSION="$(python3 -c 'import json; print(json.load(open("mod_manifest.json", encoding="utf-8"))["version"])')"
-        TAG="v${VERSION}"
-        ZIP_PATH="dist/STS2RunsMod-v${VERSION}.zip"
-
-        if [ ! -f "$ZIP_PATH" ]; then
-          printf "Missing %s. Run 'task build-release' first.\n" "$ZIP_PATH" >&2
-          exit 1
-        fi
-
-        if ! command -v gh >/dev/null 2>&1; then
-          printf "GitHub CLI (gh) is required to upload releases.\n" >&2
-          exit 1
-        fi
-
-        if ! gh auth status >/dev/null 2>&1; then
-          printf "GitHub CLI is not authenticated. Run 'gh auth login' first.\n" >&2
-          exit 1
-        fi
-
-        if gh release view "$TAG" >/dev/null 2>&1; then
-          gh release upload "$TAG" "$ZIP_PATH" --clobber
-        else
-          gh release create "$TAG" "$ZIP_PATH" --title "$TAG" --notes "Release $TAG"
-        fi
-
-        printf "Uploaded %s to release %s\n" "$ZIP_PATH" "$TAG"

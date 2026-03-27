@@ -4,7 +4,7 @@
   "name": "STS2 Runs Uploader",
   "author": "roberto",
   "description": "Automatically uploads completed runs to sts2runs dashboard. Install/update: https://github.com/RoberTnf/sts2runs-mod/releases",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "has_pck": false,
   "has_dll": true,
   "affects_gameplay": false,

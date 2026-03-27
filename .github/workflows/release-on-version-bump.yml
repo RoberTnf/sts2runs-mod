@@ -71,6 +71,6 @@ jobs:
             if gh release view "$TAG" >/dev/null 2>&1; then
               gh release upload "$TAG" "$ZIP_PATH" --clobber
             else
-              gh release create "$TAG" "$ZIP_PATH" --title "$TAG" --notes "Release $TAG"
+              gh release create "$TAG" "$ZIP_PATH" --title "$TAG" --notes-file installation_instructions.txt
             fi
           '
