@@ -11,9 +11,23 @@ namespace STS2RunsMod
 
     public static class RunExporter
     {
-        private static readonly string SaveBase =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                         "SlayTheSpire2");
+        private static readonly string SaveBase = FindSaveBase();
+
+        private static string FindSaveBase()
+        {
+            var local = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                                     "SlayTheSpire2", "steam");
+            if (Directory.Exists(local))
+                return Path.GetDirectoryName(local)!;
+
+            var roaming = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                                       "SlayTheSpire2", "steam");
+            if (Directory.Exists(roaming))
+                return Path.GetDirectoryName(roaming)!;
+
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                               "SlayTheSpire2");
+        }
 
         public static RunResult ReadLatestRunFile()
         {
